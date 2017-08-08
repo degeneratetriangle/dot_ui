@@ -2,20 +2,27 @@ import React from 'react';
 import {
     Step,
     Stepper,
-    StepLabel,
+    StepLabel
 } from 'material-ui/Stepper';
 import {
     Card,
-    CardActions,
     CardHeader,
     CardMedia,
-    CardTitle,
     CardText
 } from 'material-ui/Card';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import ExpandTransition from 'material-ui/internal/ExpandTransition';
-import TextField from 'material-ui/TextField';
+import Uploader from './Uploader';
+import DataViewer from './DataViewer';
+import Features from './Features';
+import NeuralNetwork from './NeuralNetwork';
+import Training from './Training';
+
+
+const style = {
+  margin: 20
+};
 
 class Wizard extends React.Component {
 
@@ -33,11 +40,17 @@ class Wizard extends React.Component {
 
     handleNext = () => {
         const {stepIndex} = this.state;
+
+        if (stepIndex === 1) {
+            // We're dealing with the features step
+            this.refs.features.preProcessData();
+        }
+
         if (!this.state.loading) {
             this.dummyAsync(() => this.setState({
                 loading: false,
                 stepIndex: stepIndex + 1,
-                finished: stepIndex >= 2,
+                finished: stepIndex >= 3,
             }));
         }
     };
@@ -56,31 +69,22 @@ class Wizard extends React.Component {
         switch (stepIndex) {
             case 0:
                 return (
-                    <p>
-                        Select campaign settings. Campaign settings can include your budget, network, bidding
-                        options and adjustments, location targeting, campaign end date, and other settings that
-                        affect an entire campaign.
-                    </p>
+                    <Uploader/>
                 );
             case 1:
                 return (
                     <div>
-                        <TextField style={{marginTop: 0}} floatingLabelText="Ad group name" />
-                        <p>
-                            Ad group status is different than the statuses for campaigns, ads, and keywords, though the
-                            statuses can affect each other. Ad groups are contained within a campaign, and each
-                            campaign can have one or more ad groups. Within each ad group are ads, keywords, and bids.
-                        </p>
-                        <p>Something something whatever cool</p>
+                        <Features ref="features"/>
+                        <DataViewer/>
                     </div>
                 );
             case 2:
                 return (
-                    <p>
-                        Try out different ad text to see what brings in the most customers, and learn how to
-                        enhance your ads using features like ad extensions. If you run into any problems with your
-                        ads, find out how to tell if they're running and how to resolve approval issues.
-                    </p>
+                    <NeuralNetwork/>
+                );
+            case 3:
+                return (
+                    <Training/>
                 );
             default:
                 return 'You\'re a long way from home sonny jim!';
@@ -88,26 +92,8 @@ class Wizard extends React.Component {
     }
 
     renderContent() {
-        const {finished, stepIndex} = this.state;
+        const {stepIndex} = this.state;
         const contentStyle = {margin: '0 16px', overflow: 'hidden'};
-
-        if (finished) {
-            return (
-                <div style={contentStyle}>
-                    <p>
-                        <a
-                            href="#"
-                            onClick={(event) => {
-                                event.preventDefault();
-                                this.setState({stepIndex: 0, finished: false});
-                            }}
-                        >
-                        Click here
-                        </a> to reset the example.
-                    </p>
-                </div>
-            );
-        }
 
         return (
             <div style={contentStyle}>
@@ -120,7 +106,7 @@ class Wizard extends React.Component {
                         style={{marginRight: 12}}
                     />
                     <RaisedButton
-                        label={stepIndex === 2 ? 'Finish' : 'Next'}
+                        label={stepIndex === 3 ? 'Finish' : 'Next'}
                         primary={true}
                         onTouchTap={this.handleNext}
                     />
@@ -133,11 +119,11 @@ class Wizard extends React.Component {
         const {loading, stepIndex} = this.state;
 
         return (
-            <Card>
+            <Card style={style}>
                 <CardHeader
-                    title="URL Avatar"
-                    subtitle="Subtitle"
-                    avatar="images/jsa-128.jpg"
+                    title="Neural Network Builder"
+                    subtitle="Guided step-by-step publishing"
+                    avatar="images/gowildly.png"
                 />
                 <CardMedia>
                     <Stepper activeStep={stepIndex}>
